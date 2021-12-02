@@ -9,32 +9,20 @@
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
 
+int lsh_cd(char **args);
+int lsh_help(char **args);
+int lsh_exit(char **args);
+
 char *builtin_str[] = {
     "cd",
     "help",
     "exit"
 };
 
-void lsh_loop(void) {
-    char *line;
-    char **args;
-    int status;
-
-    do {
-        printf("> ");
-        line = lsh_read_line();
-        args = lsh_split_line(line);
-        status = lsh_execute(args);
-    }
-
-    free(line);
-    free(args);
-} while (status);
-
 char *lsh_read_line(void) {
     int bufsize = LSH_RL_BUFSIZE;
     int position = 0;
-    char *buffer = malloc(sizeof(char) * bufsize)
+    char *buffer = malloc(sizeof(char) * bufsize);
     int c;
 
     if (!buffer) {
@@ -122,7 +110,7 @@ int lsh_launch(char ** args) {
     return 1;
 }
 
-int (*builtinfunc[]) (char **) {
+int (*builtinfunc[]) (char **) = {
     &lsh_cd,
     &lsh_help,
     &lsh_exit
@@ -157,7 +145,7 @@ int lsh_help(char **args) {
     return 1;
 }
 
-int lsh_exit(cahr **args) {
+int lsh_exit(char **args) {
     return 0;
 }
 
@@ -177,6 +165,22 @@ int lsh_execute(char **args) {
 
     return lsh_launch(args);
 }
+
+void lsh_loop(void) {
+    char *line;
+    char **args;
+    int status;
+
+    do {
+        printf("> ");
+        line = lsh_read_line();
+        args = lsh_split_line(line);
+        status = lsh_execute(args);
+
+    free(line);
+    free(args);
+    } while (status);
+} 
 
 int main(int argc, char **argv) {
     // Load config files, if any.
